@@ -13,8 +13,8 @@ ENV POETRY_NO_INTERACTION=1 \
 
 WORKDIR /app
 
-# Install poetry with pip's --no-cache-dir to save memory
-RUN pip install --no-cache-dir poetry
+# Install poetry with all its dependencies
+RUN pip install --no-cache-dir 'poetry>=1.7.0' cleo
 
 # Copy just pyproject.toml first
 COPY pyproject.toml README.md ./
