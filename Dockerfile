@@ -17,7 +17,7 @@ WORKDIR /app
 RUN useradd -m -u 1000 appuser
 
 # Install poetry with pip's dependency resolution
-RUN pip install --no-cache-dir 'poetry>=1.7.0'[all]
+RUN pip install --no-cache-dir 'poetry[all]>=1.7.0'
 
 # Copy just pyproject.toml first
 COPY pyproject.toml README.md ./
