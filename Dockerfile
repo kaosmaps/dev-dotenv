@@ -16,8 +16,13 @@ WORKDIR /app
 # Install poetry with pip's --no-cache-dir to save memory
 RUN pip install --no-cache-dir poetry
 
-# First install deps without the package
-COPY pyproject.toml poetry.lock README.md ./
+# Copy just pyproject.toml first
+COPY pyproject.toml README.md ./
+# Copy lock file if it exists, otherwise create a new one
+COPY poetry.lock* ./
+RUN poetry lock --no-update || true
+
+# Install dependencies
 RUN poetry install --only main --no-root --no-interaction && rm -rf $POETRY_CACHE_DIR
 
 # Build the wheel
