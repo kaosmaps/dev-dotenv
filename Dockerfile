@@ -13,8 +13,17 @@ ENV POETRY_NO_INTERACTION=1 \
 
 WORKDIR /app
 
-# Install poetry with all its dependencies
-RUN pip install --no-cache-dir 'poetry>=1.7.0' cleo
+# Create non-root user
+RUN useradd -m -u 1000 appuser
+
+# Install poetry and ALL its dependencies
+RUN pip install --no-cache-dir \
+    'poetry>=1.7.0' \
+    cleo \
+    rapidfuzz \
+    poetry-core \
+    poetry-plugin-export \
+    virtualenv
 
 # Copy just pyproject.toml first
 COPY pyproject.toml README.md ./
@@ -29,6 +38,9 @@ RUN poetry install --only main --no-root --no-interaction && rm -rf $POETRY_CACH
 COPY src ./src
 RUN poetry build --format wheel
 
+# Fix permissions
+RUN chown -R appuser:appuser /app
+
 # Run stage
 FROM python:3.12-slim AS runtime
 
@@ -39,18 +51,23 @@ ENV VIRTUAL_ENV=/app/.venv \
     # Set production environment for dotenv-vault
     DOTENV_KEY=${DOTENV_KEY}
 
+# Create same non-root user
+RUN useradd -m -u 1000 appuser
+
 WORKDIR /app
 
-# Copy the virtualenv with dependencies
-COPY --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
-# Copy the built wheel
-COPY --from=builder /app/dist/*.whl ./
+# Copy files with correct ownership
+COPY --from=builder --chown=appuser:appuser ${VIRTUAL_ENV} ${VIRTUAL_ENV}
+COPY --from=builder --chown=appuser:appuser /app/dist/*.whl ./
 
 # Install our package from the wheel
 RUN pip install *.whl && rm *.whl
 
 # Copy only the vault file
-COPY .env.vault .
+COPY --chown=appuser:appuser .env.vault .
+
+# Switch to non-root user
+USER appuser
 
 EXPOSE ${PORT}
 
