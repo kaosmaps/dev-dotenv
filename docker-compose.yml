@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8501:8501"
+    volumes:
+      # Mount source code for development
+      - ./src:/app/src
+      # Mount .env file
+      - ./.env:/app/.env
+    environment:
+      # Allow proper streaming output
+      - PYTHONUNBUFFERED=1
+      # Enable hot-reloading
+      - STREAMLIT_SERVER_RUN_ON_SAVE=true
+    # Required for streamlit to work properly in Docker
+    command: dev-dotenv serve
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8501/_stcore/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
