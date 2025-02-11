@@ -62,10 +62,10 @@ USER appuser
 
 EXPOSE ${PORT}
 
-# Use the installed package from site-packages
-CMD ["streamlit", "run", \
-    "--server.port", "${PORT}", \
-    "--server.address", "0.0.0.0", \
-    "--server.headless", "true", \
-    "--browser.serverAddress", "0.0.0.0", \
-    "/app/.venv/lib/python3.12/site-packages/dev_dotenv/app.py"] 
+# Use shell form to expand environment variables
+CMD streamlit run \
+    --server.port=${PORT} \
+    --server.address=0.0.0.0 \
+    --server.headless=true \
+    --browser.serverAddress=0.0.0.0 \
+    /app/.venv/lib/python3.12/site-packages/dev_dotenv/app.py 
