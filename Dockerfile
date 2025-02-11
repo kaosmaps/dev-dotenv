@@ -62,4 +62,4 @@ USER appuser
 
 EXPOSE ${PORT}
 
-CMD streamlit run --server.port=${PORT} --server.address=0.0.0.0 src/dev_dotenv/app.py 
+CMD streamlit run --server.port=${PORT} --server.address=0.0.0.0 -m dev_dotenv.app 
