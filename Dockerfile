@@ -22,7 +22,9 @@ RUN poetry build --format wheel
 FROM python:3.12-slim AS runtime
 
 ENV VIRTUAL_ENV=/app/.venv \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH" \
+    # Default port if not set
+    PORT=8501
 
 WORKDIR /app
 
@@ -36,6 +38,6 @@ RUN pip install *.whl && rm *.whl
 
 COPY .env .
 
-EXPOSE 8501
+EXPOSE ${PORT}
 
-CMD ["dev-dotenv", "serve"] 
+CMD streamlit run --server.port=${PORT} --server.address=0.0.0.0 src/dev_dotenv/app.py 
