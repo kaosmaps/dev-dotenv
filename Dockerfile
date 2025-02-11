@@ -16,14 +16,8 @@ WORKDIR /app
 # Create non-root user
 RUN useradd -m -u 1000 appuser
 
-# Install poetry and ALL its dependencies
-RUN pip install --no-cache-dir \
-    'poetry>=1.7.0' \
-    cleo \
-    rapidfuzz \
-    poetry-core \
-    poetry-plugin-export \
-    virtualenv
+# Install poetry with pip's dependency resolution
+RUN pip install --no-cache-dir 'poetry>=1.7.0'[all]
 
 # Copy just pyproject.toml first
 COPY pyproject.toml README.md ./
