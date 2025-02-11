@@ -8,14 +8,14 @@ services:
     volumes:
       # Mount source code for development
       - ./src:/app/src
-      # Mount .env file
-      - ./.env:/app/.env
     environment:
       # Allow proper streaming output
       - PYTHONUNBUFFERED=1
       # Enable hot-reloading
       - STREAMLIT_SERVER_RUN_ON_SAVE=true
       - PORT=${PORT:-8501}
+      # Pass dotenv key for decryption
+      - DOTENV_KEY=${DOTENV_KEY}
     # Required for streamlit to work properly in Docker
     command: dev-dotenv serve
     healthcheck:

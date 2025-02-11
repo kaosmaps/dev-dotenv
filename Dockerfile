@@ -24,7 +24,9 @@ FROM python:3.12-slim AS runtime
 ENV VIRTUAL_ENV=/app/.venv \
     PATH="/app/.venv/bin:$PATH" \
     # Default port if not set
-    PORT=8501
+    PORT=8501 \
+    # Set production environment for dotenv-vault
+    DOTENV_KEY=${DOTENV_KEY}
 
 WORKDIR /app
 
@@ -36,7 +38,8 @@ COPY --from=builder /app/dist/*.whl ./
 # Install our package from the wheel
 RUN pip install *.whl && rm *.whl
 
-COPY .env .
+# Copy only the vault file
+COPY .env.vault .
 
 EXPOSE ${PORT}
 
