@@ -9,5 +9,10 @@ def run_app():
     st.write(f"Environment says: {os.getenv('GREETING', 'No greeting found!')}")
 
 
-if __name__ == "__main__":
+# Create a module-level function for streamlit to run
+def main():
     run_app()
+
+
+if __name__ == "__main__":
+    main()
