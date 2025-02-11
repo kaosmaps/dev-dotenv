@@ -6,10 +6,7 @@ ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
     POETRY_CACHE_DIR=/tmp/poetry_cache \
     # Prevent pip from caching
-    PIP_NO_CACHE_DIR=1 \
-    # Don't install unnecessary pip/poetry dependencies
-    PIP_NO_DEPS=1 \
-    POETRY_NO_DEV=1
+    PIP_NO_CACHE_DIR=1
 
 WORKDIR /app
 
