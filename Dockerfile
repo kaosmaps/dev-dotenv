@@ -57,9 +57,15 @@ RUN pip install *.whl && rm *.whl
 # Copy only the vault file
 COPY --chown=appuser:appuser .env.vault .
 
+# Create entrypoint script
+RUN echo '#!/bin/sh\npython -c "from dev_dotenv.app import run_app; run_app()"' > /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh
+
 # Switch to non-root user
 USER appuser
 
 EXPOSE ${PORT}
 
-CMD streamlit run --server.port=${PORT} --server.address=0.0.0.0 -m dev_dotenv.app 
+# CMD streamlit run --server.port=${PORT} --server.address=0.0.0.0 -m
+# dev_dotenv.app 
+CMD ["python", "-c", "from dev_dotenv.app import run_app; run_app()"] 
