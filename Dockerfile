@@ -4,15 +4,21 @@ FROM python:3.12-slim AS builder
 ENV POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=1 \
     POETRY_VIRTUALENVS_CREATE=1 \
-    POETRY_CACHE_DIR=/tmp/poetry_cache
+    POETRY_CACHE_DIR=/tmp/poetry_cache \
+    # Prevent pip from caching
+    PIP_NO_CACHE_DIR=1 \
+    # Don't install unnecessary pip/poetry dependencies
+    PIP_NO_DEPS=1 \
+    POETRY_NO_DEV=1
 
 WORKDIR /app
 
-RUN pip install poetry
+# Install poetry with pip's --no-cache-dir to save memory
+RUN pip install --no-cache-dir poetry
 
 # First install deps without the package
 COPY pyproject.toml poetry.lock README.md ./
-RUN poetry install --only main --no-root && rm -rf $POETRY_CACHE_DIR
+RUN poetry install --only main --no-root --no-interaction && rm -rf $POETRY_CACHE_DIR
 
 # Build the wheel
 COPY src ./src
